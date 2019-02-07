@@ -1,32 +1,43 @@
 var wrap = document.querySelector('.wrap');
-var answer = document.querySelector('.answer');
-var dropHTML = document.querySelector('.drop');
-var lik = document.querySelectorAll('.drop-item');
-// необходимо передавать string
-var qs = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven'];
-
+var display = document.querySelector('.display');
+var puzzle = 'lets start and play';
 class DragAndDrop {
-    constructor(answer, questions, list) {
+    constructor(answer, riddle) {
         this.answer = answer;
-        this.questions = questions;
-        this.list = list;
-    }
+        this.riddle = riddle;
+    }   
     init() {
-        this.makeEl(this.questions, this.list);
-        this.setEvent(this.answer, this.questions, this.list);
+        this.makeEl(this.answer, this.riddle);
+        this.setEvent(this.answer, this.riddle);
+        
     }
-    makeEl(questions, list) {        
-        for(let i = 0; i < questions.length; i++) {
+    makeEl(answer, riddle) {  
+        riddle = riddle.split(' '); 
+        
+        let ul = document.createElement('ul');
+            ul.className = 'drop';            
+        answer.parentNode.appendChild(ul);
+
+        var compareRandom = function(a, b) {
+            return Math.random() - 0.5;
+        }
+
+        riddle.sort(compareRandom);
+
+        for(let i = 0; i < riddle.length; i++) {
+
             var li = document.createElement('li');
             li.className = 'drop-item';            
-            li.innerHTML = questions[i];    // необходимо вывести значения из массива в случайном порядке
+            li.innerHTML = riddle[i];   
             li.draggable = 'true';
-            list.appendChild(li);
-        }       
+            ul.appendChild(li);
+        }
+
     }
-    setEvent(answer, questions, list) {
-        var li = document.querySelectorAll('.drop-item');
-        var arr = [];
+    setEvent(answer, riddle) {
+        let li = document.querySelectorAll('.drop-item');
+        let arr = [];
+        let riddle_array = riddle.split(' ');
 
         li.forEach(function(item, index) {            
             item.addEventListener('dragstart', function(event) {
@@ -38,23 +49,23 @@ class DragAndDrop {
         });
         answer.addEventListener('drop', function(event) {
             let dropLi = li[event.dataTransfer.getData('li')];
-
+                        
             arr.push(dropLi.innerHTML);
 
-            var str = arr.join(' '), arrLeng = arr.length, quesLeng = questions.length;
+            var arrString = arr.join(' '), arrLeng = arr.length, quesLeng = riddle_array.length;
             
-            this.innerHTML = str;
+            this.innerHTML = arrString;
 
             dropLi.style.display = 'none';
             
             if(arrLeng === quesLeng) {                
-                str === questions.join(' ') ? answer.style.backgroundColor = 'green' : answer.style.backgroundColor = 'red';
+                arrString === riddle ? answer.style.backgroundColor = 'green' : answer.style.backgroundColor = 'red';
             }
         })
     }
 }
 
-let drop = new DragAndDrop(answer, qs, dropHTML);
+let drop = new DragAndDrop(display, puzzle);
 drop.init();
 
 
@@ -62,5 +73,5 @@ drop.init();
 
 let rest = document.querySelector('.res');
 rest.addEventListener('click', function() {
-    location.reload();
+    window.location.reload();
 })
